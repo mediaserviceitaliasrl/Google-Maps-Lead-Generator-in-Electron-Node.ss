@@ -34,48 +34,53 @@ async function performScraping(searchString, win) {
     const page = await browser.newPage();
     const start_time = new Date();
 
-    console.log('Navigating to the page...');
+    console.log('Navigando alla pagina...');
+    win.webContents.send('status', 'Navigando alla pagina...');
     await page.goto(`https://www.google.com/localservices/prolist?hl=en-GB&gl=it&ssta=1&q=${encodeURIComponent(searchString)}&oq=${encodeURIComponent(searchString)}&src=2`, { waitUntil: 'domcontentloaded' });
-    console.log(`Page loaded for search: ${searchString}`);
+    console.log(`Pagina caricata per la ricerca: ${searchString}`);
+    win.webContents.send('status', `Pagina caricata per la ricerca: ${searchString}`);
 
     // Gestisce l'accettazione dei cookie
     const acceptAllButton = await page.$('button[aria-label="Accept all"]');
     if (acceptAllButton) {
-        console.log('Clicking "Accept All" button...');
+        console.log('Cliccando sul pulsante "Accetta tutto"...');
+        win.webContents.send('status', 'Cliccando sul pulsante "Accetta tutto"...');
         await acceptAllButton.click();
         await page.waitForTimeout(3000);
     } else {
-        console.log('No "Accept All" button found');
+        console.log('Nessun pulsante "Accetta tutto" trovato');
+        win.webContents.send('status', 'Nessun pulsante "Accetta tutto" trovato');
     }
 
     let scrapeData = [];
 
     // Funzione per raccogliere i dati
     const getPageData = async () => {
-        console.log('Starting data collection...');
+        console.log('Inizio della raccolta dei dati...');
+        win.webContents.send('status', 'Inizio della raccolta dei dati...');
         let cards = await page.evaluate(async () => {
             const organicCards = Array.from(document.querySelectorAll('div[data-test-id="organic-list-card"]'));
-            console.log(`Found ${organicCards.length} cards on this page.`);
+            console.log(`Trovate ${organicCards.length} schede su questa pagina.`);
             let cardData = [];
             for (const card of organicCards) {
                 try {
                     const button = card.querySelector('div[role="button"] > div:first-of-type');
                     if (button && button.offsetParent !== null) {
-                        console.log('Clicking on the card...');
+                        console.log('Cliccando sulla scheda...');
                         button.click();
                         await new Promise(resolve => setTimeout(resolve, 1000));
 
-                        const name = document.querySelector(".tZPcob") ? document.querySelector(".tZPcob").innerText : "NONE";
-                        const phoneNumber = document.querySelector('[data-phone-number][role="button"][class*=" "]') ? document.querySelector('[data-phone-number][role="button"][class*=" "]').querySelector("div:last-of-type").innerHTML : "NONE";
-                        const website = document.querySelector(".iPF7ob > div:last-of-type") ? document.querySelector(".iPF7ob > div:last-of-type").innerHTML : "NONE";
-                        const address = document.querySelector(".fccl3c") ? document.querySelector(".fccl3c").innerText : "NONE";
-                        const rating = document.querySelector(".pNFZHb .rGaJuf") ? document.querySelector(".pNFZHb .rGaJuf").innerHTML : "NONE";
-                        const ratingNumber = document.querySelector(".QwSaG .leIgTe") ? document.querySelector(".QwSaG .leIgTe").innerHTML.replace(/\(|\)/g, "") : "NONE";
+                        const name = document.querySelector(".tZPcob") ? document.querySelector(".tZPcob").innerText : "NESSUNO";
+                        const phoneNumber = document.querySelector('[data-phone-number][role="button"][class*=" "]') ? document.querySelector('[data-phone-number][role="button"][class*=" "]').querySelector("div:last-of-type").innerHTML : "NESSUNO";
+                        const website = document.querySelector(".iPF7ob > div:last-of-type") ? document.querySelector(".iPF7ob > div:last-of-type").innerHTML : "NESSUNO";
+                        const address = document.querySelector(".fccl3c") ? document.querySelector(".fccl3c").innerText : "NESSUNO";
+                        const rating = document.querySelector(".pNFZHb .rGaJuf") ? document.querySelector(".pNFZHb .rGaJuf").innerHTML : "NESSUNO";
+                        const ratingNumber = document.querySelector(".QwSaG .leIgTe") ? document.querySelector(".QwSaG .leIgTe").innerHTML.replace(/\(|\)/g, "") : "NESSUNO";
 
                         cardData.push({
                             name,
                             address,
-                            phone: phoneNumber === "NONE" ? phoneNumber : phoneNumber,
+                            phone: phoneNumber === "NESSUNO" ? phoneNumber : phoneNumber,
                             website,
                             rating,
                             ratingNumber
@@ -88,37 +93,43 @@ async function performScraping(searchString, win) {
             return cardData;
         });
 
-        console.log(`Collected ${cards.length} cards.`);
+        console.log(`Raccolte ${cards.length} schede.`);
+        win.webContents.send('status', `Raccolte ${cards.length} schede.`);
         scrapeData = scrapeData.concat(cards);
 
         const nextButton = await page.$('button[aria-label="Next"]');
         if (nextButton) {
             try {
-                console.log('Navigating to next page...');
+                console.log('Navigando alla pagina successiva...');
+                win.webContents.send('status', 'Navigando alla pagina successiva...');
                 await nextButton.click();
                 await page.waitForTimeout(5000);
                 await getPageData();
             } catch (e) {
                 console.log('Errore nella navigazione, salvataggio dei dati...');
+                win.webContents.send('status', 'Errore durante la navigazione, salvataggio dei dati...');
                 await saveDataToCSV(win);
             }
         } else {
             console.log('Nessuna pagina successiva trovata, salvataggio dei dati...');
+            win.webContents.send('status', 'Nessuna pagina successiva trovata, salvataggio dei dati...');
             await saveDataToCSV(win);
         }
     };
 
     const saveDataToCSV = async (win) => {
         try {
-            console.log('Converting data to CSV...');
+            console.log('Convertendo i dati in CSV...');
+            win.webContents.send('status', 'Convertendo i dati in CSV...');
             const csv = await converter.json2csv(scrapeData);
             // Ottieni il percorso del Desktop dell'utente
             const desktopPath = app.getPath('desktop');
             const outputPath = path.join(desktopPath, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`);
             fs.writeFileSync(outputPath, csv, "utf-8");
             console.log(`[+] Record salvati nel file CSV.`);
-            console.log(`[success] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
-            win.webContents.send('status', 'Scraping completato');
+            win.webContents.send('status', '[+] Dati salvati nel file CSV');
+            console.log(`[successo] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
+            win.webContents.send('status', `[successo] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
         } catch (error) {
             console.error('Errore durante il salvataggio del file CSV:', error);
             win.webContents.send('status', 'Errore durante il salvataggio del CSV');
@@ -131,9 +142,10 @@ async function performScraping(searchString, win) {
     await browser.close();
 }
 
+
 // Gestisci l'evento per avviare lo scraping tramite IPC (Inter-Process Communication)
 ipcMain.handle('start-scraping', async (event, searchString) => {
-    console.log(`Starting scraping for: ${searchString}`);
+    console.log(`Avvio dello scraping per: ${searchString}`);
     const win = BrowserWindow.getAllWindows()[0];
     win.webContents.send('status', 'Inizio dello scraping...');
     await performScraping(searchString, win);

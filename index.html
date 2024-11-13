@@ -10,6 +10,11 @@
             font-size: 16px;
             color: green;
         }
+
+        #statusMessage p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -28,7 +33,10 @@
 
         // Ascolta il messaggio dallo stato dell'operazione di scraping
         window.electron.onStatus((message) => {
-            document.getElementById('statusMessage').textContent = message;
+            const statusMessageDiv = document.getElementById('statusMessage');
+            const newMessage = document.createElement('p');
+            newMessage.textContent = message;
+            statusMessageDiv.appendChild(newMessage);
         });
     </script>
 </body>
