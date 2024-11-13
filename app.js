@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer-extra');
 const cheerio = require('cheerio');
 const converter = require('json-2-csv');
 const fs = require("node:fs");
+const path = require('path'); // Importa il modulo 'path' per gestire i percorsi
 
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
@@ -15,6 +16,12 @@ puppeteer.use(StealthPlugin());
 
     // Leggi le parole chiave dal file di testo
     const searchStrings = fs.readFileSync(filePath, 'utf-8').split('\n').map(line => line.trim());
+
+    // Verifica se la cartella ./data esiste, altrimenti la crea
+    const dataDir = './data';
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir);
+    }
 
     const browser = await puppeteer.launch({ headless: true });
 
@@ -72,7 +79,7 @@ puppeteer.use(StealthPlugin());
                 return cardData;
             });
 
-            // Qui era il codice per il sito web e copyright che ora è commentato
+            // Sezione commentata per l'estrazione dell'anno di copyright dai siti web
             /*
             // Elabora i dati estratti e estrai l'anno di copyright dai siti web
             cards = await Promise.all(await cards.map(async c => {
@@ -117,7 +124,7 @@ puppeteer.use(StealthPlugin());
                 } catch (e) {
                     // Se la paginazione non è disponibile, salva i dati in un file CSV
                     const csv = await converter.json2csv(scrapeData);
-                    fs.writeFileSync(`output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`, csv, "utf-8");
+                    fs.writeFileSync(path.join(dataDir, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`), csv, "utf-8");
 
                     console.log(`[+] Record salvati nel file CSV`);
                     console.log(`[success] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
@@ -125,7 +132,7 @@ puppeteer.use(StealthPlugin());
             } else {
                 // Se non ci sono altre pagine, salva i dati in un file CSV
                 const csv = await converter.json2csv(scrapeData);
-                fs.writeFileSync(`output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`, csv, "utf-8");
+                fs.writeFileSync(path.join(dataDir, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`), csv, "utf-8");
 
                 console.log(`[+] Record salvati nel file CSV`);
                 console.log(`[success] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
