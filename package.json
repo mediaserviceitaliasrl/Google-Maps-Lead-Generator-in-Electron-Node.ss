@@ -1,5 +1,5 @@
 {
-  "name": "electron-scraping-app",
+  "name": "scrapantonio",
   "version": "1.0.0",
   "description": "An Electron app for web scraping using Puppeteer",
   "author": "Antonio Galluccio Mezio galluccioma.com",
@@ -22,8 +22,10 @@
   "build": {
     "appId": "it.scraper.umazing-main-app",
     "mac": {
-      "target": "dmg"
+      "target": "dmg",
+      "icon": "assets/icon.icns" 
     },
+    
     "directories": {
       "output": "dist"
     }

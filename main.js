@@ -12,6 +12,7 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
+        icon: path.join(__dirname, 'assets', 'icon.icns'), // Aggiungi qui l'icona per la finestra
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false, // Evita il rischio di vulnerabilità XSS
@@ -23,11 +24,6 @@ function createWindow() {
 
 // Funzione per eseguire lo scraping
 async function performScraping(searchString, win) {
-    const dataDir = './data';
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir);
-    }
-
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     const start_time = new Date();
@@ -110,7 +106,9 @@ async function performScraping(searchString, win) {
         try {
             console.log('Converting data to CSV...');
             const csv = await converter.json2csv(scrapeData);
-            const outputPath = path.join(dataDir, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`);
+            // Ottieni il percorso del Desktop dell'utente
+            const desktopPath = app.getPath('desktop');
+            const outputPath = path.join(desktopPath, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`);
             fs.writeFileSync(outputPath, csv, "utf-8");
             console.log(`[+] Record salvati nel file CSV.`);
             console.log(`[success] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
