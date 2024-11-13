@@ -26,7 +26,8 @@
             }
         });
 
-        window.electron.onStatus('status', (event, message) => {
+        // Ascolta il messaggio dallo stato dell'operazione di scraping
+        window.electron.onStatus((message) => {
             document.getElementById('statusMessage').textContent = message;
         });
     </script>
