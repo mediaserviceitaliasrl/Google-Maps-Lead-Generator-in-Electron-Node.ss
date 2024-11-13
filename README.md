@@ -1,57 +1,52 @@
-# Google Maps Scraper
+# Google Maps Scraper di -io
 
-This Google Maps Scraper is a Node.js tool that uses Puppeteer, Cheerio, and other libraries to extract business information from Google Local Services. It gathers data such as business name, address, phone number, website, rating, and more, and outputs the results in CSV format.
+Questo Google Maps Scraper è uno strumento Node.js che utilizza Puppeteer, Cheerio e altre librerie per estrarre informazioni sulle attività commerciali dai Servizi Locali di Google. Raccoglie dati come nome dell'attività, indirizzo, numero di telefono, sito web, valutazioni e altro, e esporta i risultati in formato CSV.  
+È disponibile anche come applicazione per Windows, Mac OS o Linux grazie a Electron.
 
-## Features
+## Funzionalità
 
-- **Automated Scraping**: Automatically navigates through Google Local Services, accepting cookies, clicking through business cards, and gathering relevant information.
-- **Data Extraction**: Extracts essential business details such as name, address, phone number, website, and ratings.
-- **CSV Export**: Outputs the scraped data in CSV format for easy analysis.
-- **Dynamic Keyword Input**: Uses a text file (`keywords.txt`) to dynamically input search terms for scraping.
-- **Stealth Mode**: Utilizes the Puppeteer Stealth Plugin to avoid detection by Google.
+- **Scraping Automatizzato**: Naviga automaticamente nei Servizi Locali di Google, accettando i cookie, cliccando sulle schede delle attività e raccogliendo le informazioni pertinenti.
+- **Estrazione dei Dati**: Estrae dettagli essenziali delle attività commerciali, come nome, indirizzo, numero di telefono, sito web e valutazioni.
+- **Esportazione in CSV**: Esporta i dati estratti in formato CSV per un'analisi facile e immediata.
+- **Modalità Stealth**: Utilizza il plugin Stealth di Puppeteer per evitare di essere rilevato da Google.
 
-## Installation
+## Utilizzo
 
-1. Clone this repository:
+1. Installa le dipendenze:
     ```bash
-    git clone https://github.com/floo-one/Google-Maps-Scraper.git
-    cd google-maps-scraper
+    npm i
     ```
 
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-
-3. Create a `keywords.txt` file in the root directory with your search terms, one per line.
-
-## Usage
-
-1. Run the scraper:
+2. Esegui lo scraper:
     ```bash
     node app.js
     ```
 
-2. The tool will automatically open a browser, search for each keyword in `keywords.txt`, and scrape the relevant data.
+3. Avvia l'app:
+    ```bash
+    npm start
+    ```
 
-3. The results will be saved in a CSV file in the current directory.
+4. Compila l'app:
+    ```bash
+    npm run build
+    ```
 
-## Use Cases
+## Casi d'Uso
 
-- **Lead Generation**: Collect contact information and business details for potential clients in a specific area.
-- **Market Research**: Analyze competitor data by scraping business information in targeted regions.
-- **Data Aggregation**: Gather data for building comprehensive business directories.
-- **SEO Analysis**: Extract and evaluate business ratings and reviews for local SEO strategies.
-
-## Requirements
-
-- Node.js (v14 or higher)
-- A stable internet connection
+- **Generazione di Lead**: Raccogli informazioni di contatto e dettagli aziendali di potenziali clienti in un'area specifica.
+- **Ricerca di Mercato**: Analizza i dati dei concorrenti raccogliendo informazioni aziendali in regioni mirate.
+- **Aggregazione di Dati**: Raccogli dati per costruire directory aziendali complete.
+- **Analisi SEO**: Estrai e valuta le valutazioni e le recensioni aziendali per strategie SEO locali.
 
 ## Disclaimer
 
-This tool is intended for educational purposes only. Scraping Google Maps or any other platform may violate their terms of service. Use this tool responsibly.
+Questo strumento è destinato esclusivamente a scopi educativi. Effettuare scraping su Google Maps o altre piattaforme potrebbe violare i loro termini di servizio. Utilizza questo strumento in modo responsabile.
 
-## License
+## Licenza
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+Questo progetto è distribuito sotto licenza MIT. Per maggiori dettagli, consulta il file `LICENSE`.
+
+```bash
+Realizzato con amore da Antonio Galluccio Mezio
+```

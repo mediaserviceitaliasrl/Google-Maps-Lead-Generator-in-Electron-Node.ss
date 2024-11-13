@@ -6,17 +6,17 @@
     <title>Scraper</title>
   </head>
   <body>
+    <section>
     <h1>Ciao Morena</h1>
-    <div class="col">
       <input
         type="text"
         id="searchString"
         class="input"
-        placeholder="Cosa cerchiamo oggi?" />
-      <button id="startScrapingButton" class="btn">Scarica i dati ora</button>
+        placeholder="🔍 Cosa cerchiamo oggi? " />
+      <button id="startScrapingButton" class="btn">Scarica i dati ora 📑</button>
       <div id="statusMessage"></div>
-      <p class="center">☃︎ -io</p>
-    </div>
+      <a href="https://galluccioma.com/" target="_blank" class="center">☃︎ -io</a>
+    </section>
     <script>
       document
         .getElementById("startScrapingButton")
@@ -37,17 +37,14 @@
     </script>
   </body>
   <style>
-    body {
+    body, section {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-items: center;
+      width: 100vw;
       height: 100vh;
       background-color: white;
-    }
-
-    .center {
-      text-align: center;
     }
 
     .input {
@@ -74,7 +71,7 @@
       border-radius: 5px;
       cursor: pointer;
       border: none;
-      margin: 0.5rem;
+      margin-top: 1rem;
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -82,6 +79,12 @@
       background-color: #163d7a;
       color: #fff;
     }
+
+    a{
+      text-decoration: none;
+      
+    }
+    
     #statusMessage {
         margin-top: 20px;
         font-size: 16px;
