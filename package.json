@@ -1,15 +1,31 @@
 {
   "name": "electron-scraping-app",
   "version": "1.0.0",
+  "description": "An Electron app for web scraping using Puppeteer",
+  "author": "Antonio Galluccio Mezio galluccioma.com",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "dependencies": {
-    "electron": "^25.0.0",
-    "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.7.1",
+    "cheerio": "^1.0.0",
+    "fs-extra": "^11.0.0",
     "json-2-csv": "^5.0.2",
-    "fs-extra": "^11.0.0"
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.7.1"
+  },
+  "devDependencies": {
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "it.scraper.umazing-main-app",
+    "mac": {
+      "target": "dmg"
+    },
+    "directories": {
+      "output": "dist"
+    }
   }
 }
