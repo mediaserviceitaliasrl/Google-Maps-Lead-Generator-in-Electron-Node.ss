@@ -155,7 +155,6 @@ async function performScraping(searchString, win) {
     await browser.close();
 }
 
-
 // Gestisci l'evento per avviare lo scraping tramite IPC (Inter-Process Communication)
 ipcMain.handle('start-scraping', async (event, searchString) => {
     console.log(`Avvio dello scraping per: ${searchString}`);
