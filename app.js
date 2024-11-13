@@ -35,7 +35,7 @@ const rl = readline.createInterface({
         const start_time = new Date();
 
         // Vai alla pagina dei risultati di ricerca
-        await page.goto(`https://www.google.com/localservices/prolist?hl=en-GB&gl=uk&ssta=1&q=${encodeURIComponent(searchString)}&oq=${encodeURIComponent(searchString)}&src=2`);
+        await page.goto(`https://www.google.com/localservices/prolist?hl=en-GB&gl=it&ssta=1&q=${encodeURIComponent(searchString)}&oq=${encodeURIComponent(searchString)}&src=2`);
 
         // Accetta tutti i cookie, se il pulsante appare
         const acceptAllButton = await page.$('button[aria-label="Accept all"]');

@@ -1,11 +1,15 @@
 {
+  "name": "electron-scraping-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "csv-parser": "^3.0.0",
-    "electron": "^33.2.0",
-    "json-2-csv": "^4.1.0",
-    "puppeteer": "^21.0.1",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "electron": "^25.0.0",
+    "puppeteer-extra": "^3.2.3",
+    "puppeteer-extra-plugin-stealth": "^2.7.1",
+    "json-2-csv": "^5.0.2",
+    "fs-extra": "^11.0.0"
   }
 }

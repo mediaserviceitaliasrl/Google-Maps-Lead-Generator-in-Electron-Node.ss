@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraper</title>
+    <style>
+        #statusMessage {
+            margin-top: 20px;
+            font-size: 16px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ciao Morena</h1>
+    <input type="text" id="searchString" placeholder="Cosa cerchiamo oggi?" />
+    <button id="startScrapingButton">Scarica i dati ora</button>
+    <div id="statusMessage"></div>
+
+    <script>
+        document.getElementById('startScrapingButton').addEventListener('click', () => {
+            const searchString = document.getElementById('searchString').value;
+            if (searchString) {
+                window.electron.startScraping(searchString);
+            }
+        });
+
+        window.electron.onStatus('status', (event, message) => {
+            document.getElementById('statusMessage').textContent = message;
+        });
+    </script>
+</body>
+</html>
