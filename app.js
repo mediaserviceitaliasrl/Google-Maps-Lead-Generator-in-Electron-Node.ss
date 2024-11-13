@@ -3,30 +3,33 @@ const cheerio = require('cheerio');
 const converter = require('json-2-csv');
 const fs = require("node:fs");
 const path = require('path'); // Importa il modulo 'path' per gestire i percorsi
+const readline = require('readline'); // Importa il modulo readline per leggere l'input da console
 
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
+// Crea un'interfaccia readline per l'input da console
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
 (async () => {
     console.clear();
-    console.log(`Google Maps Scraper\n------------------------`);
+    console.log(`Ciao Morena\n------------------------`);
 
-    // Percorso del file di testo contenente le parole chiave
-    const filePath = './data/keywords.txt';
+    // Chiedi all'utente cosa vuole cercare
+    rl.question('Cosa vuoi cercare oggi? ', async (searchString) => {
+        
+        console.log(`Sto cercando per: ${searchString}`);
 
-    // Leggi le parole chiave dal file di testo
-    const searchStrings = fs.readFileSync(filePath, 'utf-8').split('\n').map(line => line.trim());
+        // Verifica se la cartella ./data esiste, altrimenti la crea
+        const dataDir = './data';
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir);
+        }
 
-    // Verifica se la cartella ./data esiste, altrimenti la crea
-    const dataDir = './data';
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir);
-    }
-
-    const browser = await puppeteer.launch({ headless: true });
-
-    for (const searchString of searchStrings) {
-        console.log(`Sto scrivendo per: ${searchString}`);
+        const browser = await puppeteer.launch({ headless: true });
 
         const page = await browser.newPage();
         const start_time = new Date();
@@ -142,9 +145,11 @@ puppeteer.use(StealthPlugin());
         await getPageData();
 
         await page.close();
-    }
+        await browser.close();
 
-    await browser.close();
+        // Chiudi l'interfaccia readline dopo aver completato l'operazione
+        rl.close();
+    });
 })();
 
 // Funzione per estrarre l'anno di copyright dal contenuto HTML di una pagina web
