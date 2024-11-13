@@ -122,10 +122,23 @@ async function performScraping(searchString, win) {
             console.log('Convertendo i dati in CSV...');
             win.webContents.send('status', 'Convertendo i dati in CSV...');
             const csv = await converter.json2csv(scrapeData);
+            
             // Ottieni il percorso del Desktop dell'utente
             const desktopPath = app.getPath('desktop');
-            const outputPath = path.join(desktopPath, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`);
+            // Percorso della cartella scrapingData
+            const scrapingDataPath = path.join(desktopPath, 'scrapingData');
+            
+            // Crea la cartella se non esiste
+            if (!fs.existsSync(scrapingDataPath)) {
+                console.log('La cartella "scrapingData" non esiste, creandola...');
+                win.webContents.send('status', 'Creando la cartella "scrapingData"...');
+                fs.mkdirSync(scrapingDataPath);
+            }
+
+            // Percorso completo del file CSV
+            const outputPath = path.join(scrapingDataPath, `output-${searchString}-${(Math.random() + 1).toString(36).substring(7)}.csv`);
             fs.writeFileSync(outputPath, csv, "utf-8");
+
             console.log(`[+] Record salvati nel file CSV.`);
             win.webContents.send('status', '[+] Dati salvati nel file CSV');
             console.log(`[successo] Scritti ${scrapeData.length} record in ${(Date.now() - start_time.getTime()) / 1000}s`);
