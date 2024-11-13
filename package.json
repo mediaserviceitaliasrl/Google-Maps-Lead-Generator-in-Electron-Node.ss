@@ -2,6 +2,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "csv-parser": "^3.0.0",
+    "electron": "^33.2.0",
     "json-2-csv": "^4.1.0",
     "puppeteer": "^21.0.1",
     "puppeteer-extra": "^3.3.6",
