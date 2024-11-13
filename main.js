@@ -7,6 +7,9 @@ const path = require('path');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 
+// Aggiungi il percorso dell'eseguibile di Chromium/Chrome
+const executablePath = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'; // Sostituisci con il percorso corretto
+
 // Crea la finestra principale di Electron
 function createWindow() {
     const win = new BrowserWindow({
@@ -24,7 +27,10 @@ function createWindow() {
 
 // Funzione per eseguire lo scraping
 async function performScraping(searchString, win) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+        executablePath: executablePath, // Aggiungi il percorso qui
+        headless: true,
+    });
     const page = await browser.newPage();
     const start_time = new Date();
 
