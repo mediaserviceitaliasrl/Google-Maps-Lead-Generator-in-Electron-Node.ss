@@ -70,20 +70,20 @@ async function performScraping(searchString, win) {
                         button.click();
                         await new Promise(resolve => setTimeout(resolve, 1000));
 
-                        const name = document.querySelector(".tZPcob") ? document.querySelector(".tZPcob").innerText : "NESSUNO";
+                        const nome = document.querySelector(".tZPcob") ? document.querySelector(".tZPcob").innerText : "NESSUNO";
                         const phoneNumber = document.querySelector('[data-phone-number][role="button"][class*=" "]') ? document.querySelector('[data-phone-number][role="button"][class*=" "]').querySelector("div:last-of-type").innerHTML : "NESSUNO";
                         const website = document.querySelector(".iPF7ob > div:last-of-type") ? document.querySelector(".iPF7ob > div:last-of-type").innerHTML : "NESSUNO";
-                        const address = document.querySelector(".fccl3c") ? document.querySelector(".fccl3c").innerText : "NESSUNO";
-                        const rating = document.querySelector(".pNFZHb .rGaJuf") ? document.querySelector(".pNFZHb .rGaJuf").innerHTML : "NESSUNO";
-                        const ratingNumber = document.querySelector(".QwSaG .leIgTe") ? document.querySelector(".QwSaG .leIgTe").innerHTML.replace(/\(|\)/g, "") : "NESSUNO";
+                        const indirizzo = document.querySelector(".fccl3c") ? document.querySelector(".fccl3c").innerText : "NESSUNO";
+                        const recensioni = document.querySelector(".pNFZHb .rGaJuf") ? document.querySelector(".pNFZHb .rGaJuf").innerHTML : "NESSUNO";
+                        const numeroRecensioni = document.querySelector(".QwSaG .leIgTe") ? document.querySelector(".QwSaG .leIgTe").innerHTML.replace(/\(|\)/g, "") : "NESSUNO";
 
                         cardData.push({
-                            name,
-                            address,
-                            phone: phoneNumber === "NESSUNO" ? phoneNumber : phoneNumber,
+                            nome,
+                            indirizzo,
+                            telefono: phoneNumber === "NESSUNO" ? phoneNumber : phoneNumber,
                             website,
-                            rating,
-                            ratingNumber
+                            recensioni,
+                            numeroRecensioni
                         });
                     }
                 } catch (e) {
