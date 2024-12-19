@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer-extra');
 const cheerio = require('cheerio');
 const converter = require('json-2-csv');
+const axios = require('axios');  // Usa axios per fare richieste HTTP
 const fs = require("node:fs");
 const path = require('path'); // Importa il modulo 'path' per gestire i percorsi
-const readline = require('readline'); // Importa il modulo readline per leggere l'input da console
-
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
+const readline = require('readline'); // Importa il modulo readline per leggere l'input da console
 
 // Crea un'interfaccia readline per l'input da console
 const rl = readline.createInterface({
@@ -83,7 +83,7 @@ const rl = readline.createInterface({
             });
 
             // Sezione commentata per l'estrazione dell'anno di copyright dai siti web
-            /*
+            
             // Elabora i dati estratti e estrai l'anno di copyright dai siti web
             cards = await Promise.all(await cards.map(async c => {
                 if (c.website == "NONE" || !c.website) return c;  // Se non c'è un sito web, non fare nulla
@@ -91,24 +91,21 @@ const rl = readline.createInterface({
                 try {
                     // Aggiungi "https://" se il sito non include il protocollo
                     let websiteURL = c.website.includes("http") ? c.website : `https://${c.website}`;
+                    const websiteContent = await axios.get(websiteURL);                
+                    const websiteHTML = websiteContent.data;
 
-                    // Fai una richiesta HTTP per ottenere il contenuto del sito
-                    const websiteContent = await fetch(websiteURL);
-                    const websiteHTML = await websiteContent.text();
+                    const mail = extractMail(websiteHTML);
 
-                    // Estrai l'anno di copyright dal sito
-                    const copyrightYears = extractCopyrightYear(websiteHTML);
-
-                    // Aggiungi l'anno di copyright all'oggetto dei dati dell'attività
-                    c.copyright_year = copyrightYears.length > 0 ? copyrightYears[0] : null;
+                    c.mail = mail || null;
                     return c;
+
                 } catch (e) {
-                    // Se il sito web non è accessibile o c'è un errore, imposta l'anno di copyright su null
-                    c.copyright_year = null;
+                    c.mail = null;
                     return c;
                 }
             }));
-            */
+
+            
 
             // Log delle informazioni sui dati estratti
             console.log(`[data] Scritti con successo ${cards.length} record, continuando alla prossima pagina se disponibile`);
@@ -152,31 +149,21 @@ const rl = readline.createInterface({
     });
 })();
 
-// Funzione per estrarre l'anno di copyright dal contenuto HTML di una pagina web
-// La funzione `extractCopyrightYear` non verrà più utilizzata, quindi puoi anche commentarla completamente, se vuoi:
-// function extractCopyrightYear(html) {
-//     const $ = cheerio.load(html);
 
-//     const copyrightDivs = $('div').filter((index, element) => {
-//         const divText = $(element).text();
-//         return /Copyright|©/.test(divText);  // Cerca il testo "Copyright" o "©"
-//     });
+function extractMail(html) {
+    const $ = cheerio.load(html);
 
-//     const copyrightYears = [];
-//     copyrightDivs.each((index, element) => {
-//         const divText = $(element).text();
-//         if (divText.length > 400) return;  // Ignora i div troppo lunghi
-//         if (!divText.toLowerCase().includes("copyright") && !divText.toLowerCase().includes("©")) return;
-//         const years = divText.match(/\b\d{4}\b/g);  // Estrai gli anni in formato YYYY
-//         if (years) {
-//             years.forEach((year) => {
-//                 const yearInt = parseInt(year);
-//                 if (!isNaN(yearInt)) {
-//                     copyrightYears.push(yearInt);
-//                 }
-//             });
-//         }
-//     });
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
-//     return copyrightYears;
-// }
+    let email = null;
+    $('body *').each((index, element) => {
+        const text = $(element).text();
+        const matches = text.match(emailRegex);
+        if (matches && matches.length > 0) {
+            email = matches[0];
+            return false;
+        }
+    });
+
+    return email;
+}

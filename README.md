@@ -17,12 +17,12 @@ Questo Google Maps Scraper è uno strumento Node.js che utilizza Puppeteer, Chee
     npm i
     ```
 
-2. Esegui lo scraper:
+2. Esegui lo scraper da terminale:
     ```bash
     node app.js
     ```
 
-3. Avvia l'app:
+3. Avvia l'app: con GUI
     ```bash
     npm start
     ```
