@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const os = require('os');
 const puppeteer = require('puppeteer-extra');
 const cheerio = require('cheerio');
 const converter = require('json-2-csv');
@@ -24,6 +25,12 @@ function createWindow() {
 
     win.loadFile('index.html'); // Carica l'HTML di base
 }
+
+// IPC per inviare il nome utente
+ipcMain.handle('get-username', async () => {
+    return os.userInfo().username;
+});
+
 
 // Funzione per eseguire lo scraping
 async function performScraping(searchString, win) {
