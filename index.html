@@ -4,15 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scraper</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <section>
       <h1>Ciao</h1>
+      <h2>🔍 Cosa cerchiamo oggi?</h2>
       <input
         type="text"
         id="searchString"
         class="input"
-        placeholder="🔍 Cosa cerchiamo oggi?" />
+        placeholder="Inserisci le query di ricerca separate da virgola" />
       <select id="scrapingType" class="input" style="margin-top: 1rem;">
         <option value="maps">Google Maps</option>
         <option value="faq">FAQ (People Also Ask)</option>
@@ -20,6 +22,10 @@
       <div style="margin-top: 1rem;">
         <input type="text" id="folderPath" class="input" placeholder="Scegli la cartella di destinazione" readonly style="width: 300px; display: inline-block;" />
         <button id="chooseFolderButton" class="btn" type="button">Scegli Cartella</button>
+      </div>
+      <div style="margin-top: 1rem;">
+        <input type="checkbox" id="headlessCheckbox" checked />
+        <label for="headlessCheckbox">Rimuovi la spunta solo in caso di problemi</label>
       </div>
       <button id="startScrapingButton" class="btn">Scarica i dati ora 📑</button>
       <div id="statusMessage"></div>
@@ -38,8 +44,9 @@
         const searchString = document.getElementById("searchString").value;
         const scrapingType = document.getElementById("scrapingType").value;
         const folderPath = document.getElementById("folderPath").value;
+        const headless = document.getElementById("headlessCheckbox").checked;
         if (searchString && scrapingType && folderPath) {
-          window.electron.startScraping(searchString, scrapingType, folderPath);
+          window.electron.startScraping(searchString, scrapingType, folderPath, headless);
         } else {
           alert("Compila tutti i campi e scegli la cartella di destinazione.");
         }
@@ -78,73 +85,23 @@
         alertDiv.style.padding = '10px';
         alertDiv.style.margin = '10px 0';
         alertDiv.style.borderRadius = '5px';
-        alertDiv.innerHTML = `<b>Attenzione:</b> ${message}<br><button id='continueAfterManual' class='btn'>Continua</button>`;
-        statusMessageDiv.appendChild(alertDiv);
-        document.getElementById('continueAfterManual').onclick = () => {
+        const bold = document.createElement('b');
+        bold.textContent = 'Attenzione:';
+        alertDiv.appendChild(bold);
+        alertDiv.appendChild(document.createTextNode(' ' + message));
+        alertDiv.appendChild(document.createElement('br'));
+        const continueCaptchaButton = document.createElement('button');
+        continueCaptchaButton.id = 'continueCaptchaButton';
+        continueCaptchaButton.className = 'btn';
+        continueCaptchaButton.textContent = 'Continua dopo CAPTCHA';
+        continueCaptchaButton.onclick = () => {
           window.electron.confirmUserAction();
           alertDiv.remove();
         };
+        alertDiv.appendChild(continueCaptchaButton);
+        statusMessageDiv.appendChild(alertDiv);
       });
     </script>
 
-    <style>
-      body, section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-items: center;
-        width: 100vw;
-        height: 100vh;
-        background-color: white;
-      }
-
-      .input {
-        font-family: "Mulish", sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        background: #fbfcff;
-        color: #1b2b5c;
-        max-width: 455px;
-        width: 100%;
-        height: 40px;
-        padding: 0.5rem;
-        border: 1px solid #e3e8f5;
-        border-radius: 5px;
-        resize: none;
-        padding-left: 40px;
-      }
-
-      .btn {
-        font-family: "Mulish", sans-serif;
-        font-weight: 400;
-        font-size: 16px;
-        padding: 1rem 1.4rem;
-        border-radius: 5px;
-        cursor: pointer;
-        border: none;
-        margin-top: 1rem;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-
-      .btn:hover {
-        background-color: #163d7a;
-        color: #fff;
-      }
-
-      a {
-        text-decoration: none;
-      }
-
-      #statusMessage {
-        margin-top: 20px;
-        font-size: 16px;
-        color: green;
-      }
-
-      #statusMessage p {
-        margin: 5px 0;
-        font-size: 14px;
-      }
-    </style>
   </body>
 </html>

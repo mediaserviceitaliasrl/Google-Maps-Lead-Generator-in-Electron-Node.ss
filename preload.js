@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 // Esponi in modo sicuro l'API nel processo renderer
 contextBridge.exposeInMainWorld('electron', {
-    startScraping: (searchString, scrapingType, folderPath) => ipcRenderer.invoke('start-scraping', searchString, scrapingType, folderPath),
+    startScraping: (searchString, scrapingType, folderPath, headless) => ipcRenderer.invoke('start-scraping', searchString, scrapingType, folderPath, headless),
     chooseFolder: () => ipcRenderer.invoke('choose-folder'),
     onStatus: (callback) => ipcRenderer.on('status', (event, message) => callback(message)), // Passa il callback direttamente
 
