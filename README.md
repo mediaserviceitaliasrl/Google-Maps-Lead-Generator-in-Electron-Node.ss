@@ -43,10 +43,17 @@ Questo Google Maps Scraper è uno strumento Node.js che utilizza Puppeteer, Chee
 
 Questo strumento è destinato esclusivamente a scopi educativi. Effettuare scraping su Google Maps o altre piattaforme potrebbe violare i loro termini di servizio. Utilizza questo strumento in modo responsabile.
 
-## Sviluppatore non certificato
+## Sviluppatore non certificato, 
 
-codesign --force --deep --sign - ~/Desktop/scrapantonio.app
-xattr -d com.apple.quarantine ~/Desktop/scrapantonio.app
+
+Spostare la cartella nel Dekstop e lanciare firma_app.app di Automator per generare una firma personale.
+
+## se l'app non viene aperta o genera errori, spostare la cartella mac-arm64 sul desktop e lanciare i seguenti comandi da terminale
+
+
+codesign --force --deep --sign - ~/Desktop/mac-arm64/scrapantonio.app
+codesign --verify --deep --strict --verbose=2 ~/Desktop/mac-arm64/scrapantonio.app
+
 
 ## Licenza
 
