@@ -61,19 +61,43 @@
 					<key>COMMAND_STRING</key>
 					<string>#!/bin/bash
 
-# Ottieni il percorso dell'app Automator (cioè questo script .app)
-AUTOMATOR_PATH="$(dirname "$0")"
+APP_PATH=~/Desktop/mac-arm64/scrapantonio.app
 
-# Trova tutte le app .app nella stessa cartella
-APP_LIST=$(find "$AUTOMATOR_PATH" -maxdepth 1 -name "*.app")
+echo "🔍 Verifica firma prima di firmare: $APP_PATH"
+if codesign --verify --deep --strict --verbose=2 "$APP_PATH" 2&gt;&amp;1 | grep -q "valid on disk"; then
+  echo "✅ L'app è già firmata correttamente."
+else
+  echo "⚠️ L'app NON è firmata o la firma è invalida."
+fi
 
-for APP_PATH in $APP_LIST; do
-    echo "🔏 Firmo: $APP_PATH"
-    /usr/bin/codesign --force --deep --sign - "$APP_PATH"
-    /usr/bin/xattr -d com.apple.quarantine "$APP_PATH"
-done
+if xattr "$APP_PATH" 2&gt;/dev/null | grep -q "com.apple.quarantine"; then
+  echo "⚠️ L'app è soggetta a quarantena (bloccata da macOS)."
+else
+  echo "✅ L'app NON è soggetta a quarantena."
+fi
 
-/usr/bin/osascript -e 'display notification "Tutte le app sono state firmate." with title "Firma App"'
+echo "🔏 Firmo l'app..."
+codesign --force --deep --sign - "$APP_PATH"
+
+echo "🚫 Rimuovo quarantena..."
+xattr -d com.apple.quarantine "$APP_PATH" 2&gt;/dev/null || true
+
+echo "🔍 Verifica firma dopo la firma: $APP_PATH"
+if codesign --verify --deep --strict --verbose=2 "$APP_PATH" 2&gt;&amp;1 | grep -q "valid on disk"; then
+  echo "✅ Firma valida dopo l'operazione."
+else
+  echo "❌ Firma NON valida dopo l'operazione!"
+fi
+
+echo "🔍 Controllo quarantena dopo la firma: $APP_PATH"
+if xattr "$APP_PATH" 2&gt;/dev/null | grep -q "com.apple.quarantine"; then
+  echo "❌ L'app è ancora soggetta a quarantena!"
+else
+  echo "✅ Quarantena rimossa con successo."
+fi
+
+echo "Fatto!"
+
 </string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
@@ -187,7 +211,7 @@ done
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>309.000000:673.000000</string>
+				<string>769.000000:432.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
