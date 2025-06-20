@@ -8,7 +8,9 @@
     "start": "electron .",
     "build": "electron-builder",
     "maps": "node maps.js",
-    "faq": "node faq.js"
+    "faq": "node faq.js",
+    "sign": "CSC_NAME='Certificato Sviluppatore Locale' electron-builder --mac",
+    "dist": "npm run build && ls -la dist && [ -f certificato_sviluppo_locale.cer ] && cp certificato_sviluppo_locale.cer dist/mac-arm64/"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -27,17 +29,11 @@
   "build": {
     "appId": "it.scraper.umazing-main-app",
     "mac": {
+      "identity": null,
       "target": [
-        {
-          "target": "mas",
-          "arch": [
-            "universal"
-          ]
-        },
-        {
-          "target": "mas-dev"
-        }
-      ]
+        "dmg"
+      ],
+       "defaultArch": "universal"
     },
     "directories": {
       "output": "dist"
