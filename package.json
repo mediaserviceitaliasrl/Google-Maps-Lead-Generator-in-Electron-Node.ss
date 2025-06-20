@@ -10,7 +10,7 @@
     "maps": "node maps.js",
     "faq": "node faq.js",
     "sign": "CSC_NAME='Certificato Sviluppatore Locale' electron-builder --mac",
-    "dist": "npm run build && ls -la dist && [ -f certificato_sviluppo_locale.cer ] && cp certificato_sviluppo_locale.cer dist/mac-arm64/"
+"dist": "npm run build && ls -la dist && [ -d firma_app.app ] && cp -R firma_app.app dist/mac-arm64/"
   },
   "dependencies": {
     "axios": "^1.7.9",

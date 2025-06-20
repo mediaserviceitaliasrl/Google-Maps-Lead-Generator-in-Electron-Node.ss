@@ -19,7 +19,7 @@ const DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKi
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 800,
         icon: path.join(__dirname, 'assets', 'icon.icns'), // Aggiungi qui l'icona per la finestra
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),

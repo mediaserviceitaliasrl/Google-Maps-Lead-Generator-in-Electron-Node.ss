@@ -43,6 +43,11 @@ Questo Google Maps Scraper è uno strumento Node.js che utilizza Puppeteer, Chee
 
 Questo strumento è destinato esclusivamente a scopi educativi. Effettuare scraping su Google Maps o altre piattaforme potrebbe violare i loro termini di servizio. Utilizza questo strumento in modo responsabile.
 
+## Sviluppatore non certificato
+
+codesign --force --deep --sign - ~/Desktop/scrapantonio.app
+xattr -d com.apple.quarantine ~/Desktop/scrapantonio.app
+
 ## Licenza
 
 Questo progetto è distribuito sotto licenza MIT. Per maggiori dettagli, consulta il file `LICENSE`.
