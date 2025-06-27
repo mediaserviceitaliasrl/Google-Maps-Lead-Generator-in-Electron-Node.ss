@@ -159,6 +159,12 @@ async function performMapsScraping(searchString, folderPath, win, headless) {
   }
   await browser.close();
   if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath, { recursive: true });
+  // Remove duplicates before saving
+  const beforeDedup = allData.length;
+  allData = removeDuplicates(allData);
+  const afterDedup = allData.length;
+  const removed = beforeDedup - afterDedup;
+  win.webContents.send('status', `[info] Rimossi ${removed} duplicati prima del salvataggio.`);
   await saveMapsData(allData, start_time, folderPath, win, searchQueries);
 }
 
@@ -299,6 +305,19 @@ async function saveMapsData(data, start_time, folderPath, win, searchQueries) {
       (Date.now() - start_time.getTime()) / 1000
     }s`
   );
+}
+
+// Utility function to remove duplicates by name and address
+function removeDuplicates(data) {
+  const seen = new Set();
+  return data.filter(item => {
+    const key = `${item.name}|${item.address}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
 }
 
 // --- FAQ scraping logic ---
