@@ -7,50 +7,87 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <section>
-      <h1>Ciao</h1>
-      <h2>🔍 Cosa cerchiamo oggi?</h2>
-      <input
-        type="text"
-        id="searchString"
-        class="input"
-        placeholder="Inserisci le query di ricerca separate da virgola" />
-      <select id="scrapingType" class="input" style="margin-top: 1rem;">
-        <option value="maps">Google Maps</option>
-        <option value="faq">FAQ (People Also Ask)</option>
-      </select>
-      <div style="margin-top: 1rem;">
-        <input type="text" id="folderPath" class="input" placeholder="Scegli la cartella di destinazione" readonly style="width: 300px; display: inline-block;" />
-        <button id="chooseFolderButton" class="btn" type="button">Scegli Cartella</button>
-      </div>
-      <div style="margin-top: 1rem;">
-        <input type="checkbox" id="headlessCheckbox" checked />
-        <label for="headlessCheckbox">Rimuovi la spunta solo in caso di problemi</label>
-      </div>
-      <button id="startScrapingButton" class="btn">Scarica i dati ora 📑</button>
-      <div id="statusMessage"></div>
-      <a href="https://galluccioma.com/" target="_blank" class="center">☃︎ -io</a>
-    </section>
+    <main>
+      <section>
+        <h1>Ciao</h1>
+        <h2>🔍 Cosa cerchiamo oggi?</h2>
+        <input
+          type="text"
+          id="searchString"
+          class="input"
+          placeholder="Inserisci le query di ricerca separate da virgola" />
+        <select id="scrapingType" class="input">
+          <option value="maps">Google Maps</option>
+          <option value="faq">FAQ (People Also Ask)</option>
+        </select>
+        <div class="flex">
+          <input
+            type="text"
+            id="folderPath"
+            class="input"
+            placeholder="Scegli la cartella di destinazione"
+            readonly />
+          <button id="chooseFolderButton" class="btn" type="button">
+            Scegli Cartella
+          </button>
+        </div>
+        <div>
+          <input type="checkbox" id="headlessCheckbox" checked />
+          <label for="headlessCheckbox"
+            >Rimuovi la spunta solo in caso di problemi</label
+          >
+        </div>
+        <div class="flex">
+          <button id="startScrapingButton" class="btn">
+            Scarica i dati ora 📑
+          </button>
+          <button id="stopScrapingButton" class="btn btn-stop">Stop</button>
+        </div>
+      </section>
+
+      <footer class="log" id="statusMessage">
+        <a href="https://galluccioma.com/" target="_blank" class="center"
+          >☃︎ -io</a
+        >
+      </footer>
+    </main>
 
     <script>
-      document.getElementById("chooseFolderButton").addEventListener("click", async () => {
-        const folderPath = await window.electron.chooseFolder();
-        if (folderPath) {
-          document.getElementById("folderPath").value = folderPath;
-        }
-      });
+      document
+        .getElementById("chooseFolderButton")
+        .addEventListener("click", async () => {
+          const folderPath = await window.electron.chooseFolder();
+          if (folderPath) {
+            document.getElementById("folderPath").value = folderPath;
+          }
+        });
 
-      document.getElementById("startScrapingButton").addEventListener("click", () => {
-        const searchString = document.getElementById("searchString").value;
-        const scrapingType = document.getElementById("scrapingType").value;
-        const folderPath = document.getElementById("folderPath").value;
-        const headless = document.getElementById("headlessCheckbox").checked;
-        if (searchString && scrapingType && folderPath) {
-          window.electron.startScraping(searchString, scrapingType, folderPath, headless);
-        } else {
-          alert("Compila tutti i campi e scegli la cartella di destinazione.");
-        }
-      });
+      document
+        .getElementById("startScrapingButton")
+        .addEventListener("click", () => {
+          const searchString = document.getElementById("searchString").value;
+          const scrapingType = document.getElementById("scrapingType").value;
+          const folderPath = document.getElementById("folderPath").value;
+          const headless = document.getElementById("headlessCheckbox").checked;
+          if (searchString && scrapingType && folderPath) {
+            window.electron.startScraping(
+              searchString,
+              scrapingType,
+              folderPath,
+              headless
+            );
+          } else {
+            alert(
+              "Compila tutti i campi e scegli la cartella di destinazione."
+            );
+          }
+        });
+
+      document
+        .getElementById("stopScrapingButton")
+        .addEventListener("click", () => {
+          window.electron.stopScraping && window.electron.stopScraping();
+        });
 
       // Ascolta il messaggio dallo stato dell'operazione di scraping
       window.electron.onStatus((message) => {
@@ -58,6 +95,7 @@
         const newMessage = document.createElement("p");
         newMessage.textContent = message;
         statusMessageDiv.appendChild(newMessage);
+        statusMessageDiv.scrollTop = statusMessageDiv.scrollHeight;
       });
 
       // Modifica il titolo con il nome utente
@@ -66,7 +104,7 @@
           const username = await window.electron.getUsername();
           document.querySelector("h1").textContent = `Ciao ${username}`;
         } catch (error) {
-          console.error('Impossibile ottenere il nome utente:', error);
+          console.error("Impossibile ottenere il nome utente:", error);
           document.querySelector("h1").textContent = "Ciao Utente";
         }
       });
@@ -79,21 +117,21 @@
       window.electron.onUserActionRequired((message) => {
         const statusMessageDiv = document.getElementById("statusMessage");
         const alertDiv = document.createElement("div");
-        alertDiv.style.background = '#fff3cd';
-        alertDiv.style.color = '#856404';
-        alertDiv.style.border = '1px solid #ffeeba';
-        alertDiv.style.padding = '10px';
-        alertDiv.style.margin = '10px 0';
-        alertDiv.style.borderRadius = '5px';
-        const bold = document.createElement('b');
-        bold.textContent = 'Attenzione:';
+        alertDiv.style.background = "#fff3cd";
+        alertDiv.style.color = "#856404";
+        alertDiv.style.border = "1px solid #ffeeba";
+        alertDiv.style.padding = "10px";
+        alertDiv.style.margin = "10px 0";
+        alertDiv.style.borderRadius = "5px";
+        const bold = document.createElement("b");
+        bold.textContent = "Attenzione:";
         alertDiv.appendChild(bold);
-        alertDiv.appendChild(document.createTextNode(' ' + message));
-        alertDiv.appendChild(document.createElement('br'));
-        const continueCaptchaButton = document.createElement('button');
-        continueCaptchaButton.id = 'continueCaptchaButton';
-        continueCaptchaButton.className = 'btn';
-        continueCaptchaButton.textContent = 'Continua dopo CAPTCHA';
+        alertDiv.appendChild(document.createTextNode(" " + message));
+        alertDiv.appendChild(document.createElement("br"));
+        const continueCaptchaButton = document.createElement("button");
+        continueCaptchaButton.id = "continueCaptchaButton";
+        continueCaptchaButton.className = "btn";
+        continueCaptchaButton.textContent = "Continua dopo CAPTCHA";
         continueCaptchaButton.onclick = () => {
           window.electron.confirmUserAction();
           alertDiv.remove();
@@ -102,6 +140,5 @@
         statusMessageDiv.appendChild(alertDiv);
       });
     </script>
-
   </body>
 </html>

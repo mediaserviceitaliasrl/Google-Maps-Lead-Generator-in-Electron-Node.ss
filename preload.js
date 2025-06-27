@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('electron', {
     onResetLogs: (callback) => ipcRenderer.on('reset-logs', () => callback()),
 
     onUserActionRequired: (callback) => ipcRenderer.on('user-action-required', (event, message) => callback(message)),
-    confirmUserAction: () => ipcRenderer.send('user-action-confirmed')
+    confirmUserAction: () => ipcRenderer.send('user-action-confirmed'),
+    stopScraping: () => ipcRenderer.send('stop-scraping')
 });

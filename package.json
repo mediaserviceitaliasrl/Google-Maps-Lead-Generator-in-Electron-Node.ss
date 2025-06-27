@@ -10,7 +10,7 @@
     "maps": "node maps.js",
     "faq": "node faq.js",
     "sign": "CSC_NAME='Certificato Sviluppatore Locale' electron-builder --mac",
-"dist": "npm run build && ls -la dist && [ -d firma_app.app ] && cp -R firma_app.app dist/mac-arm64/"
+    "dist": "npm run build && ls -la dist && [ -d firma_app.app ] && cp -R firma_app.app dist/mac-arm64/"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -33,10 +33,11 @@
       "target": [
         "dmg"
       ],
-       "defaultArch": "universal"
+      "defaultArch": "universal"
     },
     "directories": {
       "output": "dist"
     }
-  }
+  },
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
 }
