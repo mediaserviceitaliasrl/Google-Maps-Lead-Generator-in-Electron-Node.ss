@@ -19,7 +19,17 @@
         <select id="scrapingType" class="input">
           <option value="maps">Google Maps</option>
           <option value="faq">FAQ (People Also Ask)</option>
+          <option value="dns">DNS Lookup</option>
         </select>
+        <div id="dnsRecordTypesContainer" style="display:none; margin: 10px 0;">
+          <label><input type="checkbox" class="dns-record-type" value="A" checked /> A</label>
+          <label><input type="checkbox" class="dns-record-type" value="MX" checked /> MX</label>
+          <label><input type="checkbox" class="dns-record-type" value="TXT" checked /> TXT</label>
+          <label><input type="checkbox" class="dns-record-type" value="CNAME" /> CNAME</label>
+          <label><input type="checkbox" class="dns-record-type" value="NS" /> NS</label>
+          <label><input type="checkbox" class="dns-record-type" value="AAAA" /> AAAA</label>
+          <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" /> A Mail (mail.domain)</label>
+        </div>
         <div class="flex">
           <input
             type="text"
@@ -62,6 +72,20 @@
           }
         });
 
+      const scrapingTypeSelect = document.getElementById("scrapingType");
+      const dnsRecordTypesContainer = document.getElementById("dnsRecordTypesContainer");
+      const searchStringInput = document.getElementById("searchString");
+
+      scrapingTypeSelect.addEventListener("change", () => {
+        if (scrapingTypeSelect.value === "dns") {
+          dnsRecordTypesContainer.style.display = "block";
+          searchStringInput.placeholder = "Inserisci i domini separati da virgola";
+        } else {
+          dnsRecordTypesContainer.style.display = "none";
+          searchStringInput.placeholder = "Inserisci le query di ricerca separate da virgola";
+        }
+      });
+
       document
         .getElementById("startScrapingButton")
         .addEventListener("click", () => {
@@ -69,12 +93,24 @@
           const scrapingType = document.getElementById("scrapingType").value;
           const folderPath = document.getElementById("folderPath").value;
           const headless = document.getElementById("headlessCheckbox").checked;
+          let dnsRecordTypes = [];
+          let doAMail = false;
+          if (scrapingType === "dns") {
+            dnsRecordTypes = Array.from(document.querySelectorAll('.dns-record-type:checked')).map(cb => cb.value);
+            doAMail = document.getElementById('aMailCheckbox').checked;
+            if (dnsRecordTypes.length === 0 && !doAMail) {
+              alert("Seleziona almeno un tipo di record DNS.");
+              return;
+            }
+          }
           if (searchString && scrapingType && folderPath) {
             window.electron.startScraping(
               searchString,
               scrapingType,
               folderPath,
-              headless
+              headless,
+              dnsRecordTypes,
+              doAMail
             );
           } else {
             alert(
