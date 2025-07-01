@@ -14,7 +14,7 @@ puppeteer.use(StealthPlugin());
 stopFlag.value = false; // to reset
 
 // --- FAQ scraping logic ---
-async function performFaqScraping(searchString, folderPath, win, headless) {
+async function performFaqScraping(searchString, folderPath, win, headless, useProxy = false, customProxy = "") {
   win.webContents.send("reset-logs");
   stopFlag.value = false; // Reset stop flag at the start
   const searchQueries = searchString.split(',').map(q => q.trim()).filter(Boolean);
@@ -29,7 +29,12 @@ async function performFaqScraping(searchString, folderPath, win, headless) {
     while (retry) {
       try {
         win.webContents.send('status', `\n🔍 Sto cercando: ${query}`);
-        const browser = await launchBrowser({ headless });
+        let proxyToUse = null;
+        if (useProxy) {
+          proxyToUse = customProxy ? customProxy : require("./config").randomizingProxy();
+          win.webContents.send('status', `🧭 Proxy in uso: ${proxyToUse}`);
+        }
+        const browser = await launchBrowser({ headless, proxy: proxyToUse });
         const result = await scrapePeopleAlsoAsk(query, browser, win, page);
         if (result && result.captcha) {
           // Wait for user confirmation from frontend

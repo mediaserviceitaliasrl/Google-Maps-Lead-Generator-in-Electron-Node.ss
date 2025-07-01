@@ -56,14 +56,16 @@ async function performScraping(
   win,
   headless,
   dnsRecordTypes,
-  doAMail
+  doAMail,
+  useProxy,
+  customProxy
 ) {
   if (scrapingType === "maps") {
-    await performMapsScraping(searchString, folderPath, win, headless);
+    await performMapsScraping(searchString, folderPath, win, headless, useProxy, customProxy);
   } else if (scrapingType === "faq") {
-    await performFaqScraping(searchString, folderPath, win, headless);
+    await performFaqScraping(searchString, folderPath, win, headless, useProxy, customProxy);
   } else if (scrapingType === "dns") {
-    await performDnsScraping(searchString, folderPath, win, dnsRecordTypes, doAMail);
+    await performDnsScraping(searchString, folderPath, win, dnsRecordTypes, doAMail, useProxy, customProxy);
   } else {
     win.webContents.send("status", "Tipo di scraping non valido.");
   }
@@ -72,7 +74,7 @@ async function performScraping(
 // Gestisci l'evento per avviare lo scraping tramite IPC (Inter-Process Communication)
 ipcMain.handle(
   "start-scraping",
-  async (event, searchString, scrapingType, folderPath, headless, dnsRecordTypes, doAMail) => {
+  async (event, searchString, scrapingType, folderPath, headless, dnsRecordTypes, doAMail, useProxy, customProxy) => {
     console.log(
       `Avvio dello scraping per: ${searchString} (${scrapingType}), headless: ${headless}`
     );
@@ -85,7 +87,9 @@ ipcMain.handle(
       win,
       headless,
       dnsRecordTypes,
-      doAMail
+      doAMail,
+      useProxy,
+      customProxy
     );
   }
 );

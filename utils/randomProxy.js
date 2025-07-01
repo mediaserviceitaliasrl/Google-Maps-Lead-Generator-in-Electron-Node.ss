@@ -1,5 +1,7 @@
 const proxies = [
- '143.110.217.153:1080'
+ '' // No proxy
+//  'http://proxy1.example.com:8080',
+
 ];
 
 let randomProxy = proxies[Math.floor(Math.random() * proxies.length)];

@@ -1,54 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scraper</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <main>
-      <section>
-        <h1>Ciao</h1>
-        <h2>🔍 Cosa cerchiamo oggi?</h2>
-        <input
-          type="text"
-          id="searchString"
-          class="input"
-          placeholder="Inserisci le query di ricerca separate da virgola" />
-        <select id="scrapingType" class="input">
-          <option value="maps">Google Maps</option>
-          <option value="faq">FAQ (People Also Ask)</option>
-          <option value="python">Simple python</option>
-          <option value="dns">DNS Lookup</option>
-        </select>
-        <!-- Div DNS -->
-        <div id="dnsRecordTypesContainer" style="display:none; margin: 10px 0;">
-          <label><input type="checkbox" class="dns-record-type" value="A" checked /> A</label>
-          <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" /> A (mail.dominio)</label>
-          <label><input type="checkbox" class="dns-record-type" value="MX" checked /> MX</label>
-          <label><input type="checkbox" class="dns-record-type" value="TXT" checked /> TXT</label>
-          <label><input type="checkbox" class="dns-record-type" value="CNAME" /> CNAME</label>
-          <label><input type="checkbox" class="dns-record-type" value="NS" /> NS</label>
-          <label><input type="checkbox" class="dns-record-type" value="AAAA" /> AAAA</label>
-        </div>
-        <!-- Ends Div DNS -->
-        <div class="flex">
-          <input
-            type="text"
-            id="folderPath"
-            class="input"
-            placeholder="Scegli la cartella di destinazione"
-            readonly />
-          <button id="chooseFolderButton" class="btn" type="button">
-            Scegli Cartella
-          </button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scraper</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main>
+    <section>
+      <h1>Ciao</h1>
+      <h2>🔍 Cosa cerchiamo oggi?</h2>
+      <input type="text" id="searchString" class="input"
+        placeholder="Inserisci le query di ricerca separate da virgola" />
+      <select id="scrapingType" class="input">
+        <option value="maps">Google Maps</option>
+        <option value="faq">FAQ (People Also Ask)</option>
+        <option value="python">Simple python</option>
+        <option value="dns">DNS Lookup</option>
+      </select>
+      <!-- Div DNS -->
+      <div id="dnsRecordTypesContainer" style="display:none; margin: 10px 0;">
+        <label><input type="checkbox" class="dns-record-type" value="A" checked /> A</label>
+        <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" /> A (mail.dominio)</label>
+        <label><input type="checkbox" class="dns-record-type" value="MX" checked /> MX</label>
+        <label><input type="checkbox" class="dns-record-type" value="TXT" checked /> TXT</label>
+        <label><input type="checkbox" class="dns-record-type" value="CNAME" /> CNAME</label>
+        <label><input type="checkbox" class="dns-record-type" value="NS" /> NS</label>
+        <label><input type="checkbox" class="dns-record-type" value="AAAA" /> AAAA</label>
+      </div>
+      <!-- Ends Div DNS -->
+      <div class="flex">
+        <input type="text" id="folderPath" class="input" placeholder="Scegli la cartella di destinazione" readonly />
+        <button id="chooseFolderButton" class="btn" type="button">
+          Scegli Cartella
+        </button>
+      </div>
+      <div>
+       
+        <div id="checkboxes" >
+          <div>
+            <input type="checkbox" id="headlessCheckbox" checked />
+            <label for="headlessCheckbox">Rimuovi la spunta solo in caso di problemi (e per le faq)</label>
+          </div>
+
+          <div>
+            <input type="checkbox" id="useProxyCheckbox" />
+            <label for="useProxyCheckbox">Usa proxy</label>
+          </div>
         </div>
         <div>
-          <input type="checkbox" id="headlessCheckbox" checked />
-          <label for="headlessCheckbox"
-            >Rimuovi la spunta solo in caso di problemi (e per le faq)</label
-          >
+          <input type="text" id="customProxyInput" class="input" placeholder="Proxy personalizzato (es: http://ip:porta)"/>
         </div>
         <div class="flex">
           <button id="startScrapingButton" class="btn">
@@ -56,128 +60,131 @@
           </button>
           <button id="stopScrapingButton" class="btn btn-stop">Stop</button>
         </div>
-      </section>
+    </section>
 
-      <footer class="log" id="statusMessage">
-        <a href="https://galluccioma.com/" target="_blank" class="center"
-          >☃︎ -io</a
-        >
-      </footer>
-    </main>
+    <footer class="log" id="statusMessage">
+      <a href="https://galluccioma.com/" target="_blank" class="center">☃︎ -io</a>
+    </footer>
+  </main>
 
-    <script>
-      document
-        .getElementById("chooseFolderButton")
-        .addEventListener("click", async () => {
-          const folderPath = await window.electron.chooseFolder();
-          if (folderPath) {
-            document.getElementById("folderPath").value = folderPath;
+  <script>
+    document
+      .getElementById("chooseFolderButton")
+      .addEventListener("click", async () => {
+        const folderPath = await window.electron.chooseFolder();
+        if (folderPath) {
+          document.getElementById("folderPath").value = folderPath;
+        }
+      });
+
+    const scrapingTypeSelect = document.getElementById("scrapingType");
+    const dnsRecordTypesContainer = document.getElementById("dnsRecordTypesContainer");
+    const searchStringInput = document.getElementById("searchString");
+
+    scrapingTypeSelect.addEventListener("change", () => {
+      if (scrapingTypeSelect.value === "dns") {
+        dnsRecordTypesContainer.style.display = "block";
+        searchStringInput.placeholder = "Inserisci i domini separati da virgola";
+      } else {
+        dnsRecordTypesContainer.style.display = "none";
+        searchStringInput.placeholder = "Inserisci le query di ricerca separate da virgola";
+      }
+    });
+
+    document
+      .getElementById("startScrapingButton")
+      .addEventListener("click", () => {
+        const searchString = document.getElementById("searchString").value;
+        const scrapingType = document.getElementById("scrapingType").value;
+        const folderPath = document.getElementById("folderPath").value;
+        const headless = document.getElementById("headlessCheckbox").checked;
+        let dnsRecordTypes = [];
+        let doAMail = false;
+        if (scrapingType === "dns") {
+          dnsRecordTypes = Array.from(document.querySelectorAll('.dns-record-type:checked')).map(cb => cb.value);
+          doAMail = document.getElementById('aMailCheckbox').checked;
+          if (dnsRecordTypes.length === 0 && !doAMail) {
+            alert("Seleziona almeno un tipo di record DNS.");
+            return;
           }
-        });
-
-      const scrapingTypeSelect = document.getElementById("scrapingType");
-      const dnsRecordTypesContainer = document.getElementById("dnsRecordTypesContainer");
-      const searchStringInput = document.getElementById("searchString");
-
-      scrapingTypeSelect.addEventListener("change", () => {
-        if (scrapingTypeSelect.value === "dns") {
-          dnsRecordTypesContainer.style.display = "block";
-          searchStringInput.placeholder = "Inserisci i domini separati da virgola";
+        }
+        const useProxy = document.getElementById("useProxyCheckbox").checked;
+        const customProxy = document.getElementById("customProxyInput").value.trim();
+        if (searchString && scrapingType && folderPath) {
+          window.electron.startScraping(
+            searchString,
+            scrapingType,
+            folderPath,
+            headless,
+            dnsRecordTypes,
+            doAMail,
+            useProxy,
+            customProxy
+          );
         } else {
-          dnsRecordTypesContainer.style.display = "none";
-          searchStringInput.placeholder = "Inserisci le query di ricerca separate da virgola";
+          alert(
+            "Compila tutti i campi e scegli la cartella di destinazione."
+          );
         }
       });
 
-      document
-        .getElementById("startScrapingButton")
-        .addEventListener("click", () => {
-          const searchString = document.getElementById("searchString").value;
-          const scrapingType = document.getElementById("scrapingType").value;
-          const folderPath = document.getElementById("folderPath").value;
-          const headless = document.getElementById("headlessCheckbox").checked;
-          let dnsRecordTypes = [];
-          let doAMail = false;
-          if (scrapingType === "dns") {
-            dnsRecordTypes = Array.from(document.querySelectorAll('.dns-record-type:checked')).map(cb => cb.value);
-            doAMail = document.getElementById('aMailCheckbox').checked;
-            if (dnsRecordTypes.length === 0 && !doAMail) {
-              alert("Seleziona almeno un tipo di record DNS.");
-              return;
-            }
-          }
-          if (searchString && scrapingType && folderPath) {
-            window.electron.startScraping(
-              searchString,
-              scrapingType,
-              folderPath,
-              headless,
-              dnsRecordTypes,
-              doAMail
-            );
-          } else {
-            alert(
-              "Compila tutti i campi e scegli la cartella di destinazione."
-            );
-          }
-        });
-
-      document
-        .getElementById("stopScrapingButton")
-        .addEventListener("click", () => {
-          window.electron.stopScraping && window.electron.stopScraping();
-        });
-
-      // Ascolta il messaggio dallo stato dell'operazione di scraping
-      window.electron.onStatus((message) => {
-        const statusMessageDiv = document.getElementById("statusMessage");
-        const newMessage = document.createElement("p");
-        newMessage.textContent = message;
-        statusMessageDiv.appendChild(newMessage);
-        statusMessageDiv.scrollTop = statusMessageDiv.scrollHeight;
+    document
+      .getElementById("stopScrapingButton")
+      .addEventListener("click", () => {
+        window.electron.stopScraping && window.electron.stopScraping();
       });
 
-      // Modifica il titolo con il nome utente
-      document.addEventListener("DOMContentLoaded", async () => {
-        try {
-          const username = await window.electron.getUsername();
-          document.querySelector("h1").textContent = `Ciao ${username}`;
-        } catch (error) {
-          console.error("Impossibile ottenere il nome utente:", error);
-          document.querySelector("h1").textContent = "Ciao Utente";
-        }
-      });
+    // Ascolta il messaggio dallo stato dell'operazione di scraping
+    window.electron.onStatus((message) => {
+      const statusMessageDiv = document.getElementById("statusMessage");
+      const newMessage = document.createElement("p");
+      newMessage.textContent = message;
+      statusMessageDiv.appendChild(newMessage);
+      statusMessageDiv.scrollTop = statusMessageDiv.scrollHeight;
+    });
 
-      window.electron.onResetLogs(() => {
-        document.getElementById("statusMessage").innerHTML = "";
-      });
+    // Modifica il titolo con il nome utente
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const username = await window.electron.getUsername();
+        document.querySelector("h1").textContent = `Ciao ${username}`;
+      } catch (error) {
+        console.error("Impossibile ottenere il nome utente:", error);
+        document.querySelector("h1").textContent = "Ciao Utente";
+      }
+    });
 
-      // Handle user-action-required (captcha or cookie manual action)
-      window.electron.onUserActionRequired((message) => {
-        const statusMessageDiv = document.getElementById("statusMessage");
-        const alertDiv = document.createElement("div");
-        alertDiv.style.background = "#fff3cd";
-        alertDiv.style.color = "#856404";
-        alertDiv.style.border = "1px solid #ffeeba";
-        alertDiv.style.padding = "10px";
-        alertDiv.style.margin = "10px 0";
-        alertDiv.style.borderRadius = "5px";
-        const bold = document.createElement("b");
-        bold.textContent = "Attenzione:";
-        alertDiv.appendChild(bold);
-        alertDiv.appendChild(document.createTextNode(" " + message));
-        alertDiv.appendChild(document.createElement("br"));
-        const continueCaptchaButton = document.createElement("button");
-        continueCaptchaButton.id = "continueCaptchaButton";
-        continueCaptchaButton.className = "btn";
-        continueCaptchaButton.textContent = "Continua dopo CAPTCHA";
-        continueCaptchaButton.onclick = () => {
-          window.electron.confirmUserAction();
-          alertDiv.remove();
-        };
-        alertDiv.appendChild(continueCaptchaButton);
-        statusMessageDiv.appendChild(alertDiv);
-      });
-    </script>
-  </body>
+    window.electron.onResetLogs(() => {
+      document.getElementById("statusMessage").innerHTML = "";
+    });
+
+    // Handle user-action-required (captcha or cookie manual action)
+    window.electron.onUserActionRequired((message) => {
+      const statusMessageDiv = document.getElementById("statusMessage");
+      const alertDiv = document.createElement("div");
+      alertDiv.style.background = "#fff3cd";
+      alertDiv.style.color = "#856404";
+      alertDiv.style.border = "1px solid #ffeeba";
+      alertDiv.style.padding = "10px";
+      alertDiv.style.margin = "10px 0";
+      alertDiv.style.borderRadius = "5px";
+      const bold = document.createElement("b");
+      bold.textContent = "Attenzione:";
+      alertDiv.appendChild(bold);
+      alertDiv.appendChild(document.createTextNode(" " + message));
+      alertDiv.appendChild(document.createElement("br"));
+      const continueCaptchaButton = document.createElement("button");
+      continueCaptchaButton.id = "continueCaptchaButton";
+      continueCaptchaButton.className = "btn";
+      continueCaptchaButton.textContent = "Continua dopo CAPTCHA";
+      continueCaptchaButton.onclick = () => {
+        window.electron.confirmUserAction();
+        alertDiv.remove();
+      };
+      alertDiv.appendChild(continueCaptchaButton);
+      statusMessageDiv.appendChild(alertDiv);
+    });
+  </script>
+</body>
+
 </html>

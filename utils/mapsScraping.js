@@ -15,27 +15,30 @@ stopFlag.value = false; // to reset
 
 
 // --- Maps scraping logic ---
-async function performMapsScraping(searchString, folderPath, win, headless) {
+async function performMapsScraping(searchString, folderPath, win, headless, useProxy = false, customProxy = "") {
   win.webContents.send("reset-logs");
   stopRequested = false;
   const searchQueries = searchString
     .split(",")
     .map((q) => q.trim())
     .filter(Boolean);
-  const browser = await launchBrowser({ headless });
-  const start_time = new Date();
   let allData = [];
   for (const query of searchQueries) {
     if (stopFlag.value) {
       win.webContents.send('status', '[STOP] Scraping interrotto dall\'utente. Salvataggio dati...');
       break;
-
     }
     try {
-        
-     win.webContents.send("status", `\n🔍 Sto cercando: ${query}`);    
+      let proxyToUse = null;
+      if (useProxy) {
+        proxyToUse = customProxy ? customProxy : require("./config").randomizingProxy();
+        win.webContents.send('status', `🧭 Proxy in uso: ${proxyToUse}`);
+      }
+      win.webContents.send("status", `\n🔍 Sto cercando: ${query}`);
+      const browser = await launchBrowser({ headless, proxy: proxyToUse });
       const data = await scrapeGoogleMaps(query, browser, win);
       allData = allData.concat(data.map((d) => ({ ...d, searchQuery: query })));
+      await browser.close();
     } catch (err) {
       win.webContents.send(
         "status",
@@ -43,7 +46,6 @@ async function performMapsScraping(searchString, folderPath, win, headless) {
       );
     }
   }
-  await browser.close();
   if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath, { recursive: true });
   // Remove duplicates before saving
   const beforeDedup = allData.length;
@@ -51,7 +53,7 @@ async function performMapsScraping(searchString, folderPath, win, headless) {
   const afterDedup = allData.length;
   const removed = beforeDedup - afterDedup;
   win.webContents.send('status', `[info] Rimossi ${removed} duplicati prima del salvataggio.`);
-  await saveMapsData(allData, start_time, folderPath, win, searchQueries);
+  await saveMapsData(allData, new Date(), folderPath, win, searchQueries);
 }
 
 async function scrapeGoogleMaps(searchString, browser, win) {

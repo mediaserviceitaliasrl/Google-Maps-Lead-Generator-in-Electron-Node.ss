@@ -10,8 +10,9 @@ const stopFlag = { value: false };
 const puppeteer = require("puppeteer-extra");
 const randomizingProxy = require("./randomProxy").randomizingProxy;
 
-function launchBrowser({ headless = true, proxy = null } = {}) {
+function launchBrowser({ headless = true, proxy = true } = {}) {
   const args = [
+    `--user-agent=${DEFAULT_USER_AGENT}`,
     "--no-sandbox",
     "--disable-setuid-sandbox",
     "--disable-blink-features=AutomationControlled",
