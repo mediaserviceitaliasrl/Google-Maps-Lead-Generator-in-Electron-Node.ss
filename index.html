@@ -19,8 +19,10 @@
         <select id="scrapingType" class="input">
           <option value="maps">Google Maps</option>
           <option value="faq">FAQ (People Also Ask)</option>
+          <option value="python">Simple python</option>
           <option value="dns">DNS Lookup</option>
         </select>
+        <!-- Div DNS -->
         <div id="dnsRecordTypesContainer" style="display:none; margin: 10px 0;">
           <label><input type="checkbox" class="dns-record-type" value="A" checked /> A</label>
           <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" /> A (mail.dominio)</label>
@@ -30,6 +32,7 @@
           <label><input type="checkbox" class="dns-record-type" value="NS" /> NS</label>
           <label><input type="checkbox" class="dns-record-type" value="AAAA" /> AAAA</label>
         </div>
+        <!-- Ends Div DNS -->
         <div class="flex">
           <input
             type="text"
