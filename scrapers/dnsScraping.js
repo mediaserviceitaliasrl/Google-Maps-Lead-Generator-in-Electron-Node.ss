@@ -2,7 +2,7 @@ const converter = require("json-2-csv");
 const fs = require("fs");
 const path = require("path");
 const dns = require("dns").promises;
-const { stopFlag } = require("./config");
+const { stopFlag } = require("../utils/config");
 
 
 

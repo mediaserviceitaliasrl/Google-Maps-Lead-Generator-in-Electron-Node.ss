@@ -7,8 +7,13 @@ const DEFAULT_USER_AGENT =
 
 const stopFlag = { value: false };
 
+const workingProxy= [
+  'http://164.68.101.70:8888',
+  'http://5.189.130.42:23055',
+  'http://5.189.130.42:23055',
+
+]
 const puppeteer = require("puppeteer-extra");
-const randomizingProxy = require("./randomProxy").randomizingProxy;
 
 function launchBrowser({ headless = true, proxy = true } = {}) {
   const args = [
@@ -39,5 +44,4 @@ module.exports = {
   DEFAULT_USER_AGENT,
   stopFlag,
   launchBrowser,
-  randomizingProxy
 };

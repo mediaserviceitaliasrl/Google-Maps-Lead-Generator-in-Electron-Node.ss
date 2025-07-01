@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const randomUseragent = require("random-useragent");
-const {executablePath,DEFAULT_USER_AGENT, stopFlag, launchBrowser } = require("./config")
+const {executablePath,DEFAULT_USER_AGENT, stopFlag, launchBrowser } = require("../utils/config")
 
 
 puppeteer.use(StealthPlugin());
@@ -31,7 +31,7 @@ async function performFaqScraping(searchString, folderPath, win, headless, usePr
         win.webContents.send('status', `\n🔍 Sto cercando: ${query}`);
         let proxyToUse = null;
         if (useProxy) {
-          proxyToUse = customProxy ? customProxy : require("./config").randomizingProxy();
+          proxyToUse = customProxy;
           win.webContents.send('status', `🧭 Proxy in uso: ${proxyToUse}`);
         }
         const browser = await launchBrowser({ headless, proxy: proxyToUse });

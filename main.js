@@ -8,9 +8,9 @@ const path = require("path");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const randomUseragent = require("random-useragent");
 const axios = require("axios");
-const { performMapsScraping } = require("./utils/mapsScraping");
-const { performFaqScraping } = require("./utils/askScraping");
-const { performDnsScraping } = require("./utils/dnsScraping");
+const { performMapsScraping } = require("./scrapers/mapsScraping");
+const { performFaqScraping } = require("./scrapers/askScraping");
+const { performDnsScraping } = require("./scrapers/dnsScraping");
 const dns = require("dns").promises;
 puppeteer.use(StealthPlugin());
 const {executablePath,DEFAULT_USER_AGENT, stopFlag } = require("./utils/config")

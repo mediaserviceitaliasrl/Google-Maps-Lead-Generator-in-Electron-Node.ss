@@ -21,14 +21,15 @@
         <option value="python">Simple python</option>
         <option value="dns">DNS Lookup</option>
       </select>
+      
       <!-- Div DNS -->
       <div id="dnsRecordTypesContainer" style="display:none; margin: 10px 0;">
         <label><input type="checkbox" class="dns-record-type" value="A" checked /> A</label>
-        <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" /> A (mail.dominio)</label>
-        <label><input type="checkbox" class="dns-record-type" value="MX" checked /> MX</label>
-        <label><input type="checkbox" class="dns-record-type" value="TXT" checked /> TXT</label>
-        <label><input type="checkbox" class="dns-record-type" value="CNAME" /> CNAME</label>
+        <label><input type="checkbox" id="aMailCheckbox" value="A_MAIL" checked /> A (mail.dominio)</label>
         <label><input type="checkbox" class="dns-record-type" value="NS" /> NS</label>
+        <label><input type="checkbox" class="dns-record-type" value="MX"  /> MX</label>
+        <label><input type="checkbox" class="dns-record-type" value="TXT"  /> TXT</label>
+        <label><input type="checkbox" class="dns-record-type" value="CNAME" /> CNAME</label>
         <label><input type="checkbox" class="dns-record-type" value="AAAA" /> AAAA</label>
       </div>
       <!-- Ends Div DNS -->
@@ -51,7 +52,7 @@
             <label for="useProxyCheckbox">Usa proxy</label>
           </div>
         </div>
-        <div>
+        <div id="customProxyInput" style="display:none;">
           <input type="text" id="customProxyInput" class="input" placeholder="Proxy personalizzato (es: http://ip:porta)"/>
         </div>
         <div class="flex">
@@ -78,14 +79,26 @@
       });
 
     const scrapingTypeSelect = document.getElementById("scrapingType");
+    proxySelect = document.getElementById("useProxyCheckbox");
     const dnsRecordTypesContainer = document.getElementById("dnsRecordTypesContainer");
     const searchStringInput = document.getElementById("searchString");
+
+    proxySelect.addEventListener("change", () => {
+      const customProxyInput = document.getElementById("customProxyInput");
+      if (proxySelect.checked) {
+        customProxyInput.style.display = "block";
+      } else {
+        customProxyInput.style.display = "none";
+      }
+    });
 
     scrapingTypeSelect.addEventListener("change", () => {
       if (scrapingTypeSelect.value === "dns") {
         dnsRecordTypesContainer.style.display = "block";
         searchStringInput.placeholder = "Inserisci i domini separati da virgola";
-      } else {
+      } 
+      
+      else {
         dnsRecordTypesContainer.style.display = "none";
         searchStringInput.placeholder = "Inserisci le query di ricerca separate da virgola";
       }
